@@ -5,6 +5,7 @@ pygame.init()
 screen = pygame.display.set_mode((560, 280))
 pygame.display.set_caption("Eye Test")
 clock = pygame.time.Clock()
+max_offset = 35
 
 # Pupil position (starts centered)
 pupil_x = 0
@@ -27,6 +28,13 @@ while running:
         pupil_y -= move_speed
     if keys[pygame.K_DOWN]:
         pupil_y += move_speed
+
+# Keep pupil within the eye
+    distance = (pupil_x**2 + pupil_y**2) ** 0.5
+    if distance > max_offset:
+        scale = max_offset / distance
+        pupil_x *= scale
+        pupil_y *= scale
 
     screen.fill((0, 0, 0))
 
