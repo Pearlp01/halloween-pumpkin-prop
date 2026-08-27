@@ -12,6 +12,10 @@ while running:
             running = False
 
     screen.fill((0, 0, 0))
+    pygame.draw.circle(screen, (255, 122, 26), (180, 140), 60)
+    pygame.draw.circle(screen, (255, 122, 26), (380, 140), 60)
+    pygame.draw.circle(screen, (0, 0,0), (180, 140), 25)
+    pygame.draw.circle(screen, (0, 0, 0), (380, 140), 25)
     pygame.display.flip()
 
 pygame.quit()
