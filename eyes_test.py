@@ -21,11 +21,20 @@ blink_closing = True
 blink_progress = 0  # 0 = fully open, 1 = fully closed
 blink_speed = 0.05
 
+#Surprised expression variables
+surprised = False
+pupil_radius = 25          # normal size
+target_pupil_radius = 25   # what it's animating toward
+radius_speed = 1.5
+
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                surprised = not surprised
 
 # Check which keys are currently held down
     keys = pygame.key.get_pressed()
@@ -44,6 +53,17 @@ while running:
         scale = max_offset / distance
         pupil_x *= scale
         pupil_y *= scale
+
+# Animate pupil size for surprised expression
+    if surprised:
+        target_pupil_radius = 50
+    else:
+        target_pupil_radius = 25
+
+    if pupil_radius < target_pupil_radius:
+        pupil_radius += radius_speed
+    elif pupil_radius > target_pupil_radius:
+        pupil_radius -= radius_speed
 
 # Decide when to start a blink
     blink_timer += 1
@@ -74,8 +94,8 @@ while running:
     pygame.draw.circle(screen, (255, 122, 26), (380, 140), 60)
 
  # Pupils (position = base position + offset)
-    pygame.draw.circle(screen, (0, 0, 0), (180 + pupil_x, 140 + pupil_y), 25)
-    pygame.draw.circle(screen, (0, 0, 0), (380 + pupil_x, 140 + pupil_y), 25)
+    pygame.draw.circle(screen, (0, 0, 0), (180 + pupil_x, 140 + pupil_y), pupil_radius)
+    pygame.draw.circle(screen, (0, 0, 0), (380 + pupil_x, 140 + pupil_y), pupil_radius)
 
   # Eyelids (drawn on top, black to match background = "void" look)
     eyelid_height = int(blink_progress * 120)
