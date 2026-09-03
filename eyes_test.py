@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()
 
@@ -11,6 +12,14 @@ max_offset = 35
 pupil_x = 0
 pupil_y = 0
 move_speed = 3
+
+# Blink variables
+blink_timer = 0
+next_blink = random.randint(120, 300)
+blinking = False
+blink_closing = True
+blink_progress = 0  # 0 = fully open, 1 = fully closed
+blink_speed = 0.05
 
 running = True
 while running:
@@ -36,6 +45,28 @@ while running:
         pupil_x *= scale
         pupil_y *= scale
 
+# Decide when to start a blink
+    blink_timer += 1
+    if not blinking and blink_timer >= next_blink:
+        blinking = True
+        blink_closing = True
+
+ # Animate the blink itself
+    if blinking:
+        if blink_closing:
+            blink_progress += blink_speed
+            if blink_progress >= 1:
+                blink_progress = 1
+                blink_closing = False
+        else:
+            blink_progress -= blink_speed
+            if blink_progress <= 0:
+                blink_progress = 0
+                blinking = False
+                blink_timer = 0
+                next_blink = random.randint(120, 300)
+
+
     screen.fill((0, 0, 0))
 
 # Eyes (fixed position)
@@ -45,6 +76,13 @@ while running:
  # Pupils (position = base position + offset)
     pygame.draw.circle(screen, (0, 0, 0), (180 + pupil_x, 140 + pupil_y), 25)
     pygame.draw.circle(screen, (0, 0, 0), (380 + pupil_x, 140 + pupil_y), 25)
+
+  # Eyelids (drawn on top, black to match background = "void" look)
+    eyelid_height = int(blink_progress * 120)
+    pygame.draw.rect(screen, (0, 0, 0), (120, 80, 120, eyelid_height))
+    pygame.draw.rect(screen, (0, 0, 0), (320, 80, 120, eyelid_height))
+
+
     pygame.display.flip()
     clock.tick(60)
 
