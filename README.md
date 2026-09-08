@@ -8,3 +8,4 @@ August 26, 2026 started working with the eyes. Checking size and color of eyes a
 
 September 2, 2026 added a blink an automated blink animation as well as a surprised animation.
      Saved all current screenshots to add to text document later.
+September 7, 2026 added angry animation and locked in a good top and bottom squint height.
