@@ -27,6 +27,14 @@ pupil_radius = 25          # normal size
 target_pupil_radius = 25   # what it's animating toward
 radius_speed = 1.5
 
+# Angry expression variables
+angry = False
+top_squint = 0
+target_top_squint = 0
+bottom_squint = 0
+target_bottom_squint = 0
+squint_speed = 2
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -35,6 +43,8 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 surprised = not surprised
+            if event.key == pygame.K_a:
+                angry = not angry
 
 # Check which keys are currently held down
     keys = pygame.key.get_pressed()
@@ -65,6 +75,24 @@ while running:
     elif pupil_radius > target_pupil_radius:
         pupil_radius -= radius_speed
 
+# Animate squint for angry expression
+    if angry:
+        target_top_squint = 40
+        target_bottom_squint = 25
+    else:
+        target_top_squint = 0
+        target_bottom_squint = 0
+
+    if top_squint < target_top_squint:
+        top_squint += squint_speed
+    elif top_squint > target_top_squint:
+        top_squint -= squint_speed
+
+    if bottom_squint < target_bottom_squint:
+        bottom_squint += squint_speed
+    elif bottom_squint > target_bottom_squint:
+        bottom_squint -= squint_speed
+
 # Decide when to start a blink
     blink_timer += 1
     if not blinking and blink_timer >= next_blink:
@@ -86,7 +114,6 @@ while running:
                 blink_timer = 0
                 next_blink = random.randint(120, 300)
 
-
     screen.fill((0, 0, 0))
 
 # Eyes (fixed position)
@@ -101,6 +128,18 @@ while running:
     eyelid_height = int(blink_progress * 120)
     pygame.draw.rect(screen, (0, 0, 0), (120, 80, 120, eyelid_height))
     pygame.draw.rect(screen, (0, 0, 0), (320, 80, 120, eyelid_height))
+
+# Angry squint (top and bottom close in slightly)
+    pygame.draw.rect(screen, (0, 0, 0), (120, 80, 120, int(top_squint)))
+    pygame.draw.rect(screen, (0, 0, 0), (320, 80, 120, int(top_squint)))
+    pygame.draw.rect(screen, (0, 0, 0), (120, 200 - int(bottom_squint), 120, int(bottom_squint)))
+    pygame.draw.rect(screen, (0, 0, 0), (320, 200 - int(bottom_squint), 120, int(bottom_squint)))
+
+# Angry brows (only visible when angry)
+    if angry or top_squint > 0:
+        pygame.draw.line(screen, (255, 122, 26), (130, 90), (220, 105), 5)
+        pygame.draw.line(screen, (255, 122, 26), (430, 90), (340, 105), 5)
+
 
 
     pygame.display.flip()
