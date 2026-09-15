@@ -35,6 +35,12 @@ bottom_squint = 0
 target_bottom_squint = 0
 squint_speed = 2
 
+# Happy expression variables
+happy =  False
+happy_squint = 0
+target_happy_squint = 0
+squint_speed = 2
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -45,6 +51,10 @@ while running:
                 surprised = not surprised
             if event.key == pygame.K_a:
                 angry = not angry
+                happy = False
+            if event.key == pygame.K_h:
+                happy = not happy
+                angry = False
 
 # Check which keys are currently held down
     keys = pygame.key.get_pressed()
@@ -93,6 +103,17 @@ while running:
     elif bottom_squint > target_bottom_squint:
         bottom_squint -= squint_speed
 
+# Animate squint for happy expression
+    if happy:
+        target_happy_squint = 35
+    else:
+        target_happy_squint = 0
+
+    if happy_squint < target_happy_squint:
+        happy_squint += squint_speed
+    elif happy_squint > target_happy_squint:
+        happy_squint -= squint_speed
+
 # Decide when to start a blink
     blink_timer += 1
     if not blinking and blink_timer >= next_blink:
@@ -140,7 +161,14 @@ while running:
         pygame.draw.line(screen, (255, 122, 26), (130, 90), (220, 105), 5)
         pygame.draw.line(screen, (255, 122, 26), (430, 90), (340, 105), 5)
 
+# Happy Squint (bottom close in slightly)
+    pygame.draw.rect(screen, (0,0,0), (120, 200 - int(happy_squint), 120, int(happy_squint)))
+    pygame.draw.rect(screen, (0,0,0), (320, 200 - int(happy_squint), 120, int(happy_squint)))
 
+#Happy brows (only visible when happy)
+    if happy or happy_squint > 0:
+        pygame.draw.line(screen, (255, 122, 26), (130, 90), (220, 10), 5)
+        pygame.draw.line(screen, (255, 122, 26), (430, 90), (340, 10), 5)
 
     pygame.display.flip()
     clock.tick(60)
