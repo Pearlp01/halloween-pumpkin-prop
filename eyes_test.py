@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 pygame.init()
 
@@ -167,9 +168,8 @@ while running:
 
 #Happy brows (only visible when happy)
     if happy or happy_squint > 0:
-        pygame.draw.line(screen, (255, 122, 26), (130, 90), (220, 10), 5)
-        pygame.draw.line(screen, (255, 122, 26), (430, 90), (340, 10), 5)
-
+       pygame.draw.arc(screen, (255, 122, 26), (120, 40, 120, 60), 0, math.pi, 5)
+       pygame.draw.arc(screen, (255, 122, 26), (320, 40, 120, 60), 0, math.pi, 5)
     pygame.display.flip()
     clock.tick(60)
 
