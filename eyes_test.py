@@ -42,6 +42,13 @@ happy_squint = 0
 target_happy_squint = 0
 squint_speed = 2
 
+#Suspicious / side-eye variables
+suspicious = False
+suspicious_phase = 0    # 0=sweep to left, 1=pause left, 2=sweep to right, 3=pause right, 4=return to center
+suspicious_timer = 0
+side_eye_x = 0         # target pupil x-offset for this behavior
+side_eye_speed = 1.5
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -56,6 +63,15 @@ while running:
             if event.key == pygame.K_h:
                 happy = not happy
                 angry = False
+            if event.key == pygame.K_d:
+                suspicious = not suspicious
+                if suspicious:
+                   angry = False
+                   happy = False
+                   suspicious_phase = 0
+                   suspicious_timer = 0
+                   pupil_x = 0
+                   pupil_y = 0
 
 # Check which keys are currently held down
     keys = pygame.key.get_pressed()
@@ -94,16 +110,6 @@ while running:
         target_top_squint = 0
         target_bottom_squint = 0
 
-    if top_squint < target_top_squint:
-        top_squint += squint_speed
-    elif top_squint > target_top_squint:
-        top_squint -= squint_speed
-
-    if bottom_squint < target_bottom_squint:
-        bottom_squint += squint_speed
-    elif bottom_squint > target_bottom_squint:
-        bottom_squint -= squint_speed
-
 # Animate squint for happy expression
     if happy:
         target_happy_squint = 35
@@ -136,6 +142,49 @@ while running:
                 blink_timer = 0
                 next_blink = random.randint(120, 300)
 
+# Suspicious side-eye sequence
+    if suspicious:
+        suspicious_timer += 1
+        target_top_squint = 30
+        target_bottom_squint = 15
+
+        if suspicious_phase == 0:   # sweeping left
+            side_eye_x = -max_offset
+            if suspicious_timer > 40:
+                suspicious_phase = 1
+                suspicious_timer = 0
+        elif suspicious_phase == 1:  # pause, looking left
+            if suspicious_timer > 60:
+                suspicious_phase = 2
+                suspicious_timer = 0
+        elif suspicious_phase == 2:  # sweeping right
+            side_eye_x = max_offset
+            if suspicious_timer > 40:
+                suspicious_phase = 3
+                suspicious_timer = 0
+        elif suspicious_phase == 3:   # pause, looking right
+            if suspicious_timer > 60:
+                suspicious_phase = 4
+                suspicious_timer = 0
+        elif suspicious_phase == 4:  # return to center
+            side_eye_x = 0
+            if suspicious_timer > 40:
+                suspicious = False
+    else:
+        side_eye_x = 0
+
+# Move top/bottom squint toward whichever target was set (angry or suspicious)
+
+    if top_squint < target_top_squint:
+            top_squint += squint_speed
+    elif top_squint > target_top_squint:
+            top_squint -= squint_speed
+    
+    if bottom_squint < target_bottom_squint:
+            bottom_squint += squint_speed
+    elif bottom_squint > target_bottom_squint:
+            bottom_squint -= squint_speed
+
     screen.fill((0, 0, 0))
 
 # Eyes (fixed position)
@@ -143,8 +192,8 @@ while running:
     pygame.draw.circle(screen, (255, 122, 26), (380, 140), 60)
 
  # Pupils (position = base position + offset)
-    pygame.draw.circle(screen, (0, 0, 0), (180 + pupil_x, 140 + pupil_y), pupil_radius)
-    pygame.draw.circle(screen, (0, 0, 0), (380 + pupil_x, 140 + pupil_y), pupil_radius)
+    pygame.draw.circle(screen, (0, 0, 0), (180 + pupil_x + side_eye_x, 140 + pupil_y), pupil_radius)
+    pygame.draw.circle(screen, (0, 0, 0), (380 + pupil_x + side_eye_x, 140 + pupil_y), pupil_radius)
 
   # Eyelids (drawn on top, black to match background = "void" look)
     eyelid_height = int(blink_progress * 120)
@@ -166,7 +215,7 @@ while running:
     pygame.draw.rect(screen, (0,0,0), (120, 200 - int(happy_squint), 120, int(happy_squint)))
     pygame.draw.rect(screen, (0,0,0), (320, 200 - int(happy_squint), 120, int(happy_squint)))
 
-#Happy brows (only visible when happy)
+# Happy brows (only visible when happy)
     if happy or happy_squint > 0:
        pygame.draw.arc(screen, (255, 122, 26), (120, 40, 120, 60), 0, math.pi, 5)
        pygame.draw.arc(screen, (255, 122, 26), (320, 40, 120, 60), 0, math.pi, 5)
