@@ -10,3 +10,4 @@ September 2, 2026 added a blink an automated blink animation as well as a surpri
      Saved all current screenshots to add to text document later.
 September 7, 2026 added angry animation and locked in a good top and bottom squint height.
 September 14, 2026 added happy animation. Had to first debug wrong code for the initial happy straight brow. After getting the brows above the eyes it looked more worried than happy. Added the math module to be able to draw arcs. After debugging a downward arc curving into the eye got it to look happy.
+September 24, 2026 added a suspicious side-eye animation that will be part of the idle animation set. Started off coding from phone to laptop and debugging using phone to take pictures. When home was able to debug better uploading the file.
