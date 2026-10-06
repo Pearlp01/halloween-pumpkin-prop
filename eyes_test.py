@@ -49,6 +49,15 @@ suspicious_timer = 0
 side_eye_x = 0         # target pupil x-offset for this behavior
 side_eye_speed = 1.5
 
+# Dizzy variables
+dizzy = False
+dizzy_timer = 0
+dizzy_angle = 0
+dizzy_x = 0
+dizzy_y = 0
+dizzy_duration = 240    # total frames (2 seconds at 60 fps)
+dizzy_spin_speed = 0.2 # radians per frame
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -63,7 +72,7 @@ while running:
             if event.key == pygame.K_h:
                 happy = not happy
                 angry = False
-            if event.key == pygame.K_d:
+            if event.key == pygame.K_s:
                 suspicious = not suspicious
                 if suspicious:
                    angry = False
@@ -72,6 +81,16 @@ while running:
                    suspicious_timer = 0
                    pupil_x = 0
                    pupil_y = 0
+            if event.key == pygame.K_d:
+                dizzy = not dizzy
+                if dizzy:
+                    angry = False
+                    happy = False
+                    suspicious = False
+                    dizzy_timer = 0
+                    dizzy_angle = 0
+                    pupil_x = 0
+                    pupil_y = 0        
 
 # Check which keys are currently held down
     keys = pygame.key.get_pressed()
@@ -173,6 +192,22 @@ while running:
     else:
         side_eye_x = 0
 
+# Dizzy pupil sequence
+    if dizzy:
+        dizzy_timer += 2.1
+        dizzy_angle += dizzy_spin_speed
+        dizzy_x = int(max_offset * math.cos(dizzy_angle))
+        dizzy_y = int(max_offset * math.sin(dizzy_angle))
+        pupil_x = dizzy_x
+        pupil_y = dizzy_y
+
+        if dizzy_timer > dizzy_duration:
+            dizzy = False
+            pupil_x = 0
+            pupil_y = 0
+            dizzy_x = 0
+            dizzy_y = 0
+
 # Move top/bottom squint toward whichever target was set (angry or suspicious)
 
     if top_squint < target_top_squint:
@@ -191,11 +226,11 @@ while running:
     pygame.draw.circle(screen, (255, 122, 26), (180, 140), 60)
     pygame.draw.circle(screen, (255, 122, 26), (380, 140), 60)
 
- # Pupils (position = base position + offset)
+# Pupils (position = base position + offset)
     pygame.draw.circle(screen, (0, 0, 0), (180 + pupil_x + side_eye_x, 140 + pupil_y), pupil_radius)
     pygame.draw.circle(screen, (0, 0, 0), (380 + pupil_x + side_eye_x, 140 + pupil_y), pupil_radius)
-
-  # Eyelids (drawn on top, black to match background = "void" look)
+  
+# Eyelids (drawn on top, black to match background = "void" look)
     eyelid_height = int(blink_progress * 120)
     pygame.draw.rect(screen, (0, 0, 0), (120, 80, 120, eyelid_height))
     pygame.draw.rect(screen, (0, 0, 0), (320, 80, 120, eyelid_height))
