@@ -3,6 +3,7 @@ import random
 import math
 
 pygame.init()
+pygame.mixer.init()
 
 screen = pygame.display.set_mode((560, 280))
 pygame.display.set_caption("Eye Test")
