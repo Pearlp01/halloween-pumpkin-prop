@@ -5,6 +5,18 @@ import math
 pygame.init()
 pygame.mixer.init()
 
+# Load audio files from the "sounds" folder
+SOUNDS = {
+    "angry":    pygame.mixer.Sound("sounds/angry.wav"),
+    "dizzy":    pygame.mixer.Sound("sounds/dizzy.wav"),
+    "happy":    pygame.mixer.Sound("sounds/happy.wav"),
+    "side_eye": pygame.mixer.Sound("sounds/side_eye.wav"),
+}
+
+def play_sound(name):
+    pygame.mixer.stop()
+    SOUNDS[name].play()
+
 screen = pygame.display.set_mode((560, 280))
 pygame.display.set_caption("Eye Test")
 clock = pygame.time.Clock()
@@ -70,9 +82,13 @@ while running:
             if event.key == pygame.K_a:
                 angry = not angry
                 happy = False
+                if angry:
+                    play_sound("angry")
             if event.key == pygame.K_h:
                 happy = not happy
                 angry = False
+                if happy:
+                    play_sound("happy")
             if event.key == pygame.K_s:
                 suspicious = not suspicious
                 if suspicious:
@@ -82,6 +98,7 @@ while running:
                    suspicious_timer = 0
                    pupil_x = 0
                    pupil_y = 0
+                   play_sound("side_eye")
             if event.key == pygame.K_d:
                 dizzy = not dizzy
                 if dizzy:
@@ -91,7 +108,8 @@ while running:
                     dizzy_timer = 0
                     dizzy_angle = 0
                     pupil_x = 0
-                    pupil_y = 0        
+                    pupil_y = 0
+                    play_sound("dizzy")        
 
 # Check which keys are currently held down
     keys = pygame.key.get_pressed()
