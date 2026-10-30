@@ -11,6 +11,7 @@ SOUNDS = {
     "dizzy":    pygame.mixer.Sound("sounds/dizzy.wav"),
     "happy":    pygame.mixer.Sound("sounds/happy.wav"),
     "side_eye": pygame.mixer.Sound("sounds/side_eye.wav"),
+    "surprised": pygame.mixer.Sound("sounds/surprised.wav")
 }
 
 def play_sound(name):
@@ -71,6 +72,48 @@ dizzy_y = 0
 dizzy_duration = 240    # total frames (2 seconds at 60 fps)
 dizzy_spin_speed = 0.2 # radians per frame
 
+# Global Sequence Control
+
+sequence = ["surprised", "side_eye", "dizzy", "angry", "happy"]
+seq_index = 0
+last_trigger = -10000
+cooldown_ms = 8000        # ignore new triggers for 8 seconds
+expression_timer = 0      # frames left before angry/happy turn themselves off
+
+def start_animation(name):
+    global angry, happy, suspicious, dizzy, surprised, pupil_x, pupil_y
+    global suspicious_phase, suspicious_timer, dizzy_timer, dizzy_angle
+    global expression_timer
+    angry = happy = suspicious = dizzy = surprised = False
+    pupil_x = pupil_y = 0
+    if name == "side_eye":
+        suspicious = True
+        suspicious_phase = 0
+        suspicious_timer = 0
+    elif name == "dizzy":
+        dizzy = True
+        dizzy_timer = 0
+        dizzy_angle = 0
+    elif name == "angry":
+        angry = True
+        expression_timer = 180      # about 3 seconds
+    elif name == "happy":
+        happy = True
+        expression_timer = 180
+    elif name == "surprised":
+        surprised = True
+        expression_timer = 120      # about 2 seconds
+    play_sound(name)
+
+def trigger_next():
+    global seq_index, last_trigger
+    now = pygame.time.get_ticks()
+    if now - last_trigger < cooldown_ms:
+        return
+    last_trigger = now
+    start_animation(sequence[seq_index])
+    seq_index = (seq_index + 1) % len(sequence)
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -79,6 +122,8 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 surprised = not surprised
+                if surprised:
+                    play_sound("surprised")
             if event.key == pygame.K_a:
                 angry = not angry
                 happy = False
@@ -109,7 +154,9 @@ while running:
                     dizzy_angle = 0
                     pupil_x = 0
                     pupil_y = 0
-                    play_sound("dizzy")        
+                    play_sound("dizzy")
+            if event.key == pygame.K_p:
+                trigger_next()        
 
 # Check which keys are currently held down
     keys = pygame.key.get_pressed()
@@ -238,6 +285,13 @@ while running:
             bottom_squint += squint_speed
     elif bottom_squint > target_bottom_squint:
             bottom_squint -= squint_speed
+
+    if expression_timer > 0:
+        expression_timer -= 1
+        if expression_timer == 0:
+            angry = False
+            happy = False
+            surprised = False
 
     screen.fill((0, 0, 0))
 
