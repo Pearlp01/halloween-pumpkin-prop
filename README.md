@@ -13,3 +13,4 @@ September 14, 2026 added happy animation. Had to first debug wrong code for the 
 September 24, 2026 added a suspicious side-eye animation that will be part of the idle animation set. Started off coding from phone to laptop and debugging using phone to take pictures. When home was able to debug better uploading the file.
 October 5, 2026. Fixed dizzy idle animation. All expressions and idle animations set. Starting work on audio and will shortly buy hardware for the electronics. Need to find a good pumpkin prop to set all the electronics in.
 Found out that I need to have my phone recording and saving the files in a .wav format instead of a .m4a format, better for Pigame. 
+Thursday October 8, 2026. Finished buying all the electronics for my pumpkin project. I still need to create sound files for my project. Using a rough sounding voice will sound better than my happy chipper one.
